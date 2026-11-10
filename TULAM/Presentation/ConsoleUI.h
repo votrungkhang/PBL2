@@ -8,6 +8,10 @@ private:
     BuuKienService& service;
 
     void themBuuKien();
+    void timKiemBuuKien() const;
+    void capNhatBuuKien();
+    void huyBuuKien();
+    void xoaBuuKien();
     void hienThiDanhSach() const;
 
 public:

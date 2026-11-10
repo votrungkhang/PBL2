@@ -44,6 +44,69 @@ bool LinkedListBuuKienRepository::contains(
     return false;
 }
 
+const BuuKien* LinkedListBuuKienRepository::findByMaBuuKien(
+    const string& maBuuKien) const {
+    for (Node* current = head; current != nullptr; current = current->next) {
+        if (current->data->getMaBuuKien() == maBuuKien) {
+            return current->data.get();
+        }
+    }
+    return nullptr;
+}
+
+bool LinkedListBuuKienRepository::update(
+    const string& maBuuKien,
+    unique_ptr<BuuKien> buuKien) {
+    if (!buuKien || buuKien->getMaBuuKien() != maBuuKien) {
+        return false;
+    }
+
+    for (Node* current = head; current != nullptr; current = current->next) {
+        if (current->data->getMaBuuKien() == maBuuKien) {
+            current->data = move(buuKien);
+            return true;
+        }
+    }
+    return false;
+}
+
+bool LinkedListBuuKienRepository::updateTrangThai(
+    const string& maBuuKien,
+    const string& trangThai) {
+    for (Node* current = head; current != nullptr; current = current->next) {
+        if (current->data->getMaBuuKien() == maBuuKien) {
+            current->data->setTrangThai(trangThai);
+            return true;
+        }
+    }
+    return false;
+}
+
+bool LinkedListBuuKienRepository::remove(const string& maBuuKien) {
+    Node* previous = nullptr;
+    Node* current = head;
+    while (current != nullptr) {
+        if (current->data->getMaBuuKien() == maBuuKien) {
+            if (previous == nullptr) {
+                head = current->next;
+            } else {
+                previous->next = current->next;
+            }
+
+            if (tail == current) {
+                tail = previous;
+            }
+
+            delete current;
+            --soLuongBuuKien;
+            return true;
+        }
+        previous = current;
+        current = current->next;
+    }
+    return false;
+}
+
 vector<const BuuKien*> LinkedListBuuKienRepository::getAll() const {
     vector<const BuuKien*> result;
     for (Node* current = head; current != nullptr; current = current->next) {

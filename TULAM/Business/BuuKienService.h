@@ -32,6 +32,20 @@ enum class KetQuaThemBuuKien {
     LOI_LUU_TRU
 };
 
+enum class KetQuaCapNhatBuuKien {
+    THANH_CONG,
+    KHONG_TIM_THAY,
+    LOAI_KHONG_HOP_LE,
+    LOI_LUU_TRU
+};
+
+enum class KetQuaXuLyBuuKien {
+    THANH_CONG,
+    KHONG_TIM_THAY,
+    DA_HUY,
+    LOI_LUU_TRU
+};
+
 class BuuKienService {
 private:
     IBuuKienRepository& repository;
@@ -40,6 +54,14 @@ public:
     BuuKienService(IBuuKienRepository& repository);
 
     KetQuaThemBuuKien themBuuKien(const ThongTinBuuKien& thongTin);
+    bool timBuuKienTheoMa(
+        const std::string& maBuuKien,
+        ThongTinBuuKien& ketQua) const;
+    KetQuaCapNhatBuuKien capNhatBuuKien(
+        const std::string& maBuuKien,
+        const ThongTinBuuKien& thongTin);
+    KetQuaXuLyBuuKien huyBuuKien(const std::string& maBuuKien);
+    KetQuaXuLyBuuKien xoaBuuKien(const std::string& maBuuKien);
     std::vector<ThongTinBuuKien> layDanhSachBuuKien() const;
 };
 
