@@ -1,12 +1,20 @@
-#include"dslk.h"
-#include"BuuKienBinhThuong.h"
-#include"BuuKienHoaToc.h"
-#include"BuuKienNhanh.h"
-#include"QuanLy.h"
+#include "DataAccess/FileBuuKienRepository.h"
+#include "Business/BuuKienService.h"
+#include "Presentation/ConsoleUI.h"
+
+#include <iostream>
+#include <stdexcept>
+
 int main() {
-    LinkedList list;
-    QuanLy QuanLyBuuKien(list);
-    QuanLyBuuKien.themBuuKien();
-    QuanLyBuuKien.Show();
-    return 0;
+    try {
+        FileBuuKienRepository repository;
+        BuuKienService service(repository);
+        ConsoleUI app(service);
+        const int exitCode = app.run();
+        repository.save();
+        return exitCode;
+    } catch (const std::runtime_error& error) {
+        std::cerr << "Loi du lieu: " << error.what() << '\n';
+        return 1;
+    }
 }
