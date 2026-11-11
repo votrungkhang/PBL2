@@ -7,19 +7,6 @@
 using namespace std;
 
 namespace {
-string tenLoaiBuuKien(LoaiBuuKien loai) {
-    switch (loai) {
-    case LoaiBuuKien::BINH_THUONG:
-        return "BINH_THUONG";
-    case LoaiBuuKien::HOA_TOC:
-        return "HOA_TOC";
-    case LoaiBuuKien::NHANH:
-        return "NHANH";
-    default:
-        return "CHUA_XAC_DINH";
-    }
-}
-
 void hienThiThongTinBuuKien(
     const ThongTinBuuKien& buuKien,
     const string& tieuDe) {
@@ -30,7 +17,7 @@ void hienThiThongTinBuuKien(
          << tieuDe << '\n'
          << phanCach << '\n'
          << left << setw(26) << "Loai"
-         << ": " << tenLoaiBuuKien(buuKien.loaiBuuKien) << '\n'
+         << ": " << buuKien.loaiBuuKien << '\n'
          << left << setw(26) << "Ma buu kien"
          << ": " << buuKien.maBuuKien << '\n'
          << left << setw(26) << "Trong luong"
@@ -65,25 +52,8 @@ bool nhapSo(const string& loiNhac, Number& giaTri);
 bool nhapSoThuc(const string& loiNhac, double& giaTri);
 
 bool nhapThongTinBuuKien(ThongTinBuuKien& thongTin) {
-    int loaiBuuKien;
-    if (!nhapSo("Loai (1: Binh thuong, 2: Hoa toc, 3: Nhanh): ",
-                loaiBuuKien)
-        || loaiBuuKien < 1 || loaiBuuKien > 3) {
-        cout << "Loai buu kien khong hop le.\n";
-        return false;
-    }
-
-    switch (loaiBuuKien) {
-    case 1:
-        thongTin.loaiBuuKien = LoaiBuuKien::BINH_THUONG;
-        break;
-    case 2:
-        thongTin.loaiBuuKien = LoaiBuuKien::HOA_TOC;
-        break;
-    case 3:
-        thongTin.loaiBuuKien = LoaiBuuKien::NHANH;
-        break;
-    }
+    cout << "Nhap loai buu kien (BINH_THUONG, HOA_TOC, NHANH): ";
+    if (!getline(cin, thongTin.loaiBuuKien)) return false;
 
     if (!nhapSoThuc("Nhap trong luong: ", thongTin.trongLuong)) return false;
 
@@ -198,16 +168,12 @@ int ConsoleUI::run() {
 void ConsoleUI::themBuuKien() {
     ThongTinBuuKien thongTin;
 
-    cout << "Nhap ma buu kien: ";
-    if (!getline(cin, thongTin.maBuuKien)) {
-        return;
-    }
-
     if (!nhapThongTinBuuKien(thongTin)) return;
 
     switch (service.themBuuKien(thongTin)) {
     case KetQuaThemBuuKien::THANH_CONG:
-        cout << "Them buu kien thanh cong.\n";
+        cout << "Them buu kien thanh cong. Ma buu kien: "
+             << thongTin.maBuuKien << '\n';
         break;
     case KetQuaThemBuuKien::MA_TRONG:
         cout << "Ma buu kien khong duoc de trong.\n";

@@ -34,8 +34,8 @@ public:
     bool remove(const string& maBuuKien) override;
     vector<const BuuKien*> getAll() const override;
 
-    int getSoLuongBuuKien();
-    void setSoLuongBuuKien(const int&);
+    int getSoLuongBuuKien() const override;
+    void setSoLuongBuuKien(const int&) override;
 };
 
 #endif

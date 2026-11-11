@@ -9,7 +9,7 @@ class IBuuKienRepository;
 
 struct ThongTinBuuKien {
     std::string maBuuKien;
-    LoaiBuuKien loaiBuuKien = LoaiBuuKien::CHUA_XAC_DINH;
+    std::string loaiBuuKien;
     double trongLuong = 0;
     std::string diaChiGui;
     std::string diaChiNhan;
@@ -49,11 +49,12 @@ enum class KetQuaXuLyBuuKien {
 class BuuKienService {
 private:
     IBuuKienRepository& repository;
+    int so_luong_buu_kien_hom_nay;
 
 public:
     BuuKienService(IBuuKienRepository& repository);
 
-    KetQuaThemBuuKien themBuuKien(const ThongTinBuuKien& thongTin);
+    KetQuaThemBuuKien themBuuKien(ThongTinBuuKien& thongTin);
     bool timBuuKienTheoMa(
         const std::string& maBuuKien,
         ThongTinBuuKien& ketQua) const;
@@ -63,6 +64,9 @@ public:
     KetQuaXuLyBuuKien huyBuuKien(const std::string& maBuuKien);
     KetQuaXuLyBuuKien xoaBuuKien(const std::string& maBuuKien);
     std::vector<ThongTinBuuKien> layDanhSachBuuKien() const;
+    static std::string layNgayHienTai();
+    int GetSoLuongBuuKienHomNay();
+    void SetSoLuongBuuKienHomNay(const int&);
 };
 
 #endif

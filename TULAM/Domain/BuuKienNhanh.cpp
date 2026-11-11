@@ -1,6 +1,6 @@
 #include "BuuKienNhanh.h"
 
 BuuKienNhanh::BuuKienNhanh(){
-    setLoaiBuuKien(LoaiBuuKien::NHANH);
+    SetLoaiBuuKien("NHANH");
 }
 

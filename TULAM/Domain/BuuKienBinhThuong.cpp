@@ -1,5 +1,5 @@
 #include "BuuKienBinhThuong.h"
 
 BuuKienBinhThuong::BuuKienBinhThuong(){
-    setLoaiBuuKien(LoaiBuuKien::BINH_THUONG);
+    SetLoaiBuuKien("BINH THUONG");
 }

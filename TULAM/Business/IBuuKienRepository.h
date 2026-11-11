@@ -21,6 +21,8 @@ public:
         const std::string& trangThai) = 0;
     virtual bool remove(const std::string& maBuuKien) = 0;
     virtual std::vector<const BuuKien*> getAll() const = 0;
+    virtual int getSoLuongBuuKien() const = 0;
+    virtual void setSoLuongBuuKien(const int&) =0;
 };
 
 #endif

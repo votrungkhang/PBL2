@@ -37,7 +37,7 @@ bool LinkedListBuuKienRepository::add( unique_ptr<BuuKien> buuKien) {
 bool LinkedListBuuKienRepository::contains(
     const string& maBuuKien) const {
     for (Node* current = head; current != nullptr; current = current->next) {
-        if (current->data->getMaBuuKien() == maBuuKien) {
+        if (current->data->GetMaBuuKien() == maBuuKien) {
             return true;
         }
     }
@@ -47,7 +47,7 @@ bool LinkedListBuuKienRepository::contains(
 const BuuKien* LinkedListBuuKienRepository::findByMaBuuKien(
     const string& maBuuKien) const {
     for (Node* current = head; current != nullptr; current = current->next) {
-        if (current->data->getMaBuuKien() == maBuuKien) {
+        if (current->data->GetMaBuuKien() == maBuuKien) {
             return current->data.get();
         }
     }
@@ -57,12 +57,12 @@ const BuuKien* LinkedListBuuKienRepository::findByMaBuuKien(
 bool LinkedListBuuKienRepository::update(
     const string& maBuuKien,
     unique_ptr<BuuKien> buuKien) {
-    if (!buuKien || buuKien->getMaBuuKien() != maBuuKien) {
+    if (!buuKien || buuKien->GetMaBuuKien() != maBuuKien) {
         return false;
     }
 
     for (Node* current = head; current != nullptr; current = current->next) {
-        if (current->data->getMaBuuKien() == maBuuKien) {
+        if (current->data->GetMaBuuKien() == maBuuKien) {
             current->data = move(buuKien);
             return true;
         }
@@ -74,8 +74,8 @@ bool LinkedListBuuKienRepository::updateTrangThai(
     const string& maBuuKien,
     const string& trangThai) {
     for (Node* current = head; current != nullptr; current = current->next) {
-        if (current->data->getMaBuuKien() == maBuuKien) {
-            current->data->setTrangThai(trangThai);
+        if (current->data->GetMaBuuKien() == maBuuKien) {
+            current->data->SetTrangThai(trangThai);
             return true;
         }
     }
@@ -86,7 +86,7 @@ bool LinkedListBuuKienRepository::remove(const string& maBuuKien) {
     Node* previous = nullptr;
     Node* current = head;
     while (current != nullptr) {
-        if (current->data->getMaBuuKien() == maBuuKien) {
+        if (current->data->GetMaBuuKien() == maBuuKien) {
             if (previous == nullptr) {
                 head = current->next;
             } else {
@@ -115,7 +115,7 @@ vector<const BuuKien*> LinkedListBuuKienRepository::getAll() const {
     return result;
 }
 
-int LinkedListBuuKienRepository::getSoLuongBuuKien(){
+int LinkedListBuuKienRepository::getSoLuongBuuKien() const {
     return soLuongBuuKien;
 }
 
