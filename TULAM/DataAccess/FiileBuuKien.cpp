@@ -6,43 +6,46 @@
 #include <array>
 #include <iostream>
 #include <stdexcept>
+#include <algorithm>
 
-FileBuuKien::FileBuuKien(const string& nameFile)
-    : IFileBuuKien(nameFile) {}
+string chuanHoaLoaiBuuKien(const string& loai) {
+    string loaiInHoa = loai;
+    transform(loaiInHoa.begin(), loaiInHoa.end(), loaiInHoa.begin(),
+        [](unsigned char kyTu) {
+            return static_cast<char>(toupper(kyTu));
+        });
+
+    if (loaiInHoa == "BINH_THUONG"
+        || loaiInHoa == "HOA_TOC"
+        || loaiInHoa == "NHANH") {
+        return loaiInHoa;
+    }
+
+    return "";
+}
+
+unique_ptr<BUUKIEN> taoBuuKien(string loai) {
+    const string loaiInHoa = chuanHoaLoaiBuuKien(loai);
+    unique_ptr<BUUKIEN> buuKien;
+    if (loaiInHoa == "BINH_THUONG") {
+        buuKien = make_unique<BUUKIENBINHTHUONG>();
+    } else if (loaiInHoa == "HOA_TOC") {
+        buuKien = make_unique<BUUKIENHOATOC>();
+    } else if (loaiInHoa == "NHANH") {
+        buuKien = make_unique<BUUKIENNHANH>();
+    }
+
+    if (buuKien) {
+        buuKien->SetLoaiBuuKien(loaiInHoa);
+    }
+    return buuKien;
+}
+
+
+FILEBUUKIEN::FILEBUUKIEN(const string& nameFile)
+    : IFILE(nameFile) {}
 
 namespace {
-string chuyenLoaiSangString(const LoaiBuuKien & loaibuukien){
-    if(loaibuukien==LoaiBuuKien::BINH_THUONG){
-        return "BINH_THUONG";
-    }
-    else if(loaibuukien==LoaiBuuKien::HOA_TOC){
-        return "HOA_TOC";
-    }
-    else if(loaibuukien==LoaiBuuKien::NHANH){
-        return "NHANH";
-    }
-    else{
-        return "CHUA_XAC_DINH";
-    }
-}
-
-
-LoaiBuuKien chuyenStringSangLoai(const string & loaibuukien){
-    if(loaibuukien=="BINH_THUONG" || loaibuukien=="BINHTHUONG"){
-        return LoaiBuuKien::BINH_THUONG;
-    }
-    else if(loaibuukien=="HOA_TOC" || loaibuukien=="HOATOC"){
-        return  LoaiBuuKien::HOA_TOC;
-    }
-    else if(loaibuukien=="NHANH"){
-        return  LoaiBuuKien::NHANH;
-    }
-    else{
-        return LoaiBuuKien::CHUA_XAC_DINH;
-    }
-}
-
-
 
 array<string, 14> tachDong(const string& line) {
     array<string, 14> fields;
@@ -71,35 +74,35 @@ array<string, 14> tachDong(const string& line) {
 }
 }
 
-bool FileBuuKien::save(IBuuKienRepository& dsbk){
+bool FILEBUUKIEN::save(IBUUKIENREPOSITORY& dsbk){
     ofstream file(nameFile);
 
     if(!file.is_open()){
         return false;
     }
 
-    vector<const BuuKien*> danhsachbk=dsbk.getAll();
+    vector<const BUUKIEN*> danhsachbk=dsbk.getAll();
     
     for(size_t i = 0; i < danhsachbk.size(); ++i){
-        file<<chuyenLoaiSangString(danhsachbk[i]->getLoaiBuuKien())<<"|";
-        file<<danhsachbk[i]->getMaBuuKien()<<"|";
-        file<<danhsachbk[i]->getTrongLuong()<<"|";
-        file<<danhsachbk[i]->getDiaChiGui()<<"|";
-        file<<danhsachbk[i]->getDiaChiNhan()<<"|";
-        file<<danhsachbk[i]->getNgayGui()<<"|";
-        file<<danhsachbk[i]->getTrangThai()<<"|";
-        file<<danhsachbk[i]->getMaNguoiGui()<<"|";
-        file<<danhsachbk[i]->getMaNguoiNhan()<<"|";
-        file<<danhsachbk[i]->getMaNhanVienTiepNhan()<<"|";
-        file<<danhsachbk[i]->getMaChuyen()<<"|";
-        file<<danhsachbk[i]->getPhiDichVu()<<"|";
-        file<<danhsachbk[i]->getThoiGianGiaoDuKien()<<"|";
-        file<<danhsachbk[i]->getTongPhi()<<"\n";
+        file<<danhsachbk[i]->GetMaBuuKien()<<"|";
+        file<<danhsachbk[i]->GetLoaiBuuKien()<<"|";
+        file<<danhsachbk[i]->GetTrongLuong()<<"|";
+        file<<danhsachbk[i]->GetDiaChiGui()<<"|";
+        file<<danhsachbk[i]->GetDiaChiNhan()<<"|";
+        file<<danhsachbk[i]->GetNgayGui()<<"|";
+        file<<danhsachbk[i]->GetTrangThai()<<"|";
+        file<<danhsachbk[i]->GetMaNguoiGui()<<"|";
+        file<<danhsachbk[i]->GetMaNguoiNhan()<<"|";
+        file<<danhsachbk[i]->GetMaNhanVienTiepNhan()<<"|";
+        file<<danhsachbk[i]->GetMaChuyen()<<"|";
+        file<<danhsachbk[i]->GetPhiDichVu()<<"|";
+        file<<danhsachbk[i]->GetThoiGianGiaoDuKien()<<"|";
+        file<<danhsachbk[i]->GetTongPhi()<<"\n";
     }
     file.close();
     return !file.fail();
 }
-bool FileBuuKien::read(IBuuKienRepository& dslk){
+bool FILEBUUKIEN::read(IBUUKIENREPOSITORY& dslk){
     ifstream file(nameFile);
 
     if(!file.is_open()){
@@ -107,7 +110,7 @@ bool FileBuuKien::read(IBuuKienRepository& dslk){
     }
 
     string line;
-    unique_ptr<BuuKien> buuKien;
+    unique_ptr<BUUKIEN> buuKien;
     try{
         while(getline(file,line)){
             if(line.empty()){
@@ -115,35 +118,23 @@ bool FileBuuKien::read(IBuuKienRepository& dslk){
             }
 
             auto f=tachDong(line);
-            LoaiBuuKien loai=chuyenStringSangLoai(f[0]);
-            switch (loai) {
-                case LoaiBuuKien::BINH_THUONG :
-                    buuKien.reset(new BuuKienBinhThuong);
-                    break;
-                case LoaiBuuKien::HOA_TOC:
-                    buuKien.reset(new BuuKienHoaToc);
-                    break;
-                case LoaiBuuKien::NHANH:
-                    buuKien.reset(new BuuKienNhanh) ;
-                    break;
-                default:
-                    throw runtime_error("Buu kien chua phan loai");
-            }
+            unique_ptr<BUUKIEN> buuKien = taoBuuKien(f[1]);
 
-            buuKien->setMaBuuKien(f[1]);
-            buuKien->setTrongLuong(stod(f[2]));
-            buuKien->setDiaChiGui(f[3]);
-            buuKien->setDiaChiNhan(f[4]);
-            buuKien->setNgayGui(f[5]);
+            buuKien->SetMaBuuKien(f[0]);
+            buuKien->SetLoaiBuuKien(f[1]);
+            buuKien->SetTrongLuong(stod(f[2]));
+            buuKien->SetDiaChiGui(f[3]);
+            buuKien->SetDiaChiNhan(f[4]);
+            buuKien->SetNgayGui(f[5]);
 
-            buuKien->setTrangThai(f[6]);
-            buuKien->setMaNguoiGui(f[7]);
-            buuKien->setMaNguoiNhan(f[8]);
-            buuKien->setMaNhanVienTiepNhan(f[9]);
-            buuKien->setMaChuyen(f[10]);
-            buuKien->setPhiDichVu(stod(f[11]));
-            buuKien->setThoiGianGiaoDuKien(f[12]);
-            buuKien->setTongPhi(stod(f[13]));
+            buuKien->SetTrangThai(f[6]);
+            buuKien->SetMaNguoiGui(f[7]);
+            buuKien->SetMaNguoiNhan(f[8]);
+            buuKien->SetMaNhanVienTiepNhan(f[9]);
+            buuKien->SetMaChuyen(f[10]);
+            buuKien->SetPhiDichVu(stod(f[11]));
+            buuKien->SetThoiGianGiaoDuKien(f[12]);
+            buuKien->SetTongPhi(stod(f[13]));
 
             if (!dslk.add(move(buuKien))) {
                 return false;

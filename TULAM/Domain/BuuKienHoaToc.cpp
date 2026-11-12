@@ -1,6 +1,6 @@
 #include "BuuKienHoaToc.h"
 
-BuuKienHoaToc::BuuKienHoaToc(){
+BUUKIENHOATOC::BUUKIENHOATOC(){
     SetLoaiBuuKien("HOA TOC");
 }
 

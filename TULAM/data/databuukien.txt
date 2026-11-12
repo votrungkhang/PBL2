@@ -1,1 +1,3 @@
-BINH_THUONG|BK01|12| d| |d| d|s|da| d| |123|vfdsg|123
+BK131120260001|BINH_THUONG|123|sdf|sdfds|ewrew|csdc|sfw|fwef|ewew|32|23|12|2
+BK131120260002|HOA_TOC|234|f|sdf|sd|fsd|fsd|fs|sfds|sdf|32|sdf|23
+BK131120260003|NHANH|21|sdf|sdg|f|DA_HUY|df|gd|fdsdf|sfs|21|dfgd|12

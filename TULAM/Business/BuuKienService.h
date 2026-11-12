@@ -5,7 +5,7 @@
 #include <vector>
 #include "../Domain/Enums.h"
 
-class IBuuKienRepository;
+class IBUUKIENREPOSITORY;
 
 struct ThongTinBuuKien {
     std::string maBuuKien;
@@ -29,6 +29,7 @@ enum class KetQuaThemBuuKien {
     MA_TRONG,
     MA_DA_TON_TAI,
     LOAI_KHONG_HOP_LE,
+    TRANG_THAI_KHONG_HOP_LE,
     LOI_LUU_TRU
 };
 
@@ -36,6 +37,7 @@ enum class KetQuaCapNhatBuuKien {
     THANH_CONG,
     KHONG_TIM_THAY,
     LOAI_KHONG_HOP_LE,
+    TRANG_THAI_KHONG_HOP_LE,
     LOI_LUU_TRU
 };
 
@@ -46,13 +48,14 @@ enum class KetQuaXuLyBuuKien {
     LOI_LUU_TRU
 };
 
-class BuuKienService {
+class BUUKIENSERVICE {
 private:
-    IBuuKienRepository& repository;
+    IBUUKIENREPOSITORY& repository;
     int so_luong_buu_kien_hom_nay;
+    std::string ngay_cua_bo_dem;
 
 public:
-    BuuKienService(IBuuKienRepository& repository);
+    BUUKIENSERVICE(IBUUKIENREPOSITORY& repository);
 
     KetQuaThemBuuKien themBuuKien(ThongTinBuuKien& thongTin);
     bool timBuuKienTheoMa(

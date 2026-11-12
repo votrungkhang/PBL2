@@ -2,10 +2,10 @@
 #define BUUKIENNHANH_H
 #include "BuuKien.h"
 
-class BuuKienNhanh : public BuuKien {
+class BUUKIENNHANH : public BUUKIEN {
 private:
 public:
-   BuuKienNhanh();
+   BUUKIENNHANH();
 };
 
 #endif

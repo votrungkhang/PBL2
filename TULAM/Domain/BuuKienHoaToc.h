@@ -2,10 +2,10 @@
 #define BUUKIENHOATOC_H
 #include "BuuKien.h"
 
-class BuuKienHoaToc : public BuuKien {
+class BUUKIENHOATOC : public BUUKIEN {
 private:
 public:
-    BuuKienHoaToc();
+    BUUKIENHOATOC();
 };
 
 #endif

@@ -31,15 +31,34 @@ string chuanHoaLoaiBuuKien(const string& loai) {
     return "";
 }
 
-unique_ptr<BuuKien> taoBuuKien(string loai) {
+string chuanHoaTrangThaiBuuKien(const string& trangThai) {
+    string trangThaiInHoa = trangThai;
+    transform(trangThaiInHoa.begin(), trangThaiInHoa.end(),
+        trangThaiInHoa.begin(), [](unsigned char kyTu) {
+            return static_cast<char>(toupper(kyTu));
+        });
+
+    if (trangThaiInHoa == "CHO_XU_LY"
+        || trangThaiInHoa == "DA_TIEP_NHAN"
+        || trangThaiInHoa == "DANG_VAN_CHUYEN"
+        || trangThaiInHoa == "DA_GIAO"
+        || trangThaiInHoa == "GIAO_THAT_BAI"
+        || trangThaiInHoa == "DA_HUY") {
+        return trangThaiInHoa;
+    }
+
+    return "";
+}
+
+unique_ptr<BUUKIEN> taoBuuKien(string loai) {
     const string loaiInHoa = chuanHoaLoaiBuuKien(loai);
-    unique_ptr<BuuKien> buuKien;
+    unique_ptr<BUUKIEN> buuKien;
     if (loaiInHoa == "BINH_THUONG") {
-        buuKien = make_unique<BuuKienBinhThuong>();
+        buuKien = make_unique<BUUKIENBINHTHUONG>();
     } else if (loaiInHoa == "HOA_TOC") {
-        buuKien = make_unique<BuuKienHoaToc>();
+        buuKien = make_unique<BUUKIENHOATOC>();
     } else if (loaiInHoa == "NHANH") {
-        buuKien = make_unique<BuuKienNhanh>();
+        buuKien = make_unique<BUUKIENNHANH>();
     }
 
     if (buuKien) {
@@ -48,13 +67,13 @@ unique_ptr<BuuKien> taoBuuKien(string loai) {
     return buuKien;
 }
 
-void ganThongTin(BuuKien& buuKien, const ThongTinBuuKien& thongTin) {
+void ganThongTin(BUUKIEN& buuKien, const ThongTinBuuKien& thongTin) {
     buuKien.SetMaBuuKien(thongTin.maBuuKien);
     buuKien.SetTrongLuong(thongTin.trongLuong);
     buuKien.SetDiaChiGui(thongTin.diaChiGui);
     buuKien.SetDiaChiNhan(thongTin.diaChiNhan);
     buuKien.SetNgayGui(thongTin.ngayGui);
-    buuKien.SetTrangThai(thongTin.trangThai);
+    buuKien.SetTrangThai(chuanHoaTrangThaiBuuKien(thongTin.trangThai));
     buuKien.SetMaNguoiGui(thongTin.maNguoiGui);
     buuKien.SetMaNguoiNhan(thongTin.maNguoiNhan);
     buuKien.SetMaNhanVienTiepNhan(thongTin.maNhanVienTiepNhan);
@@ -64,14 +83,14 @@ void ganThongTin(BuuKien& buuKien, const ThongTinBuuKien& thongTin) {
     buuKien.SetTongPhi(thongTin.tongPhi);
 }
 
-string taoMaBuuKienMoi(size_t soThuTu) {
-    const string tienTo = "BK" + BuuKienService::layNgayHienTai();
+string taoMaBuuKienMoi(const string& ngay, size_t soThuTu) {
+    const string tienTo = "BK" + ngay;
     ostringstream maBuuKien;
     maBuuKien << tienTo << setw(4) << setfill('0') << soThuTu;
     return maBuuKien.str();
 }
 
-ThongTinBuuKien chuyenSangThongTin(const BuuKien& buuKien) {
+ThongTinBuuKien chuyenSangThongTin(const BUUKIEN& buuKien) {
     ThongTinBuuKien thongTin;
     thongTin.maBuuKien = buuKien.GetMaBuuKien();
     thongTin.loaiBuuKien = buuKien.GetLoaiBuuKien();
@@ -91,21 +110,32 @@ ThongTinBuuKien chuyenSangThongTin(const BuuKien& buuKien) {
 }
 }
 
-BuuKienService::BuuKienService(IBuuKienRepository& repository)
-    : repository(repository),so_luong_buu_kien_hom_nay(0) {}
+BUUKIENSERVICE::BUUKIENSERVICE(IBUUKIENREPOSITORY& repository)
+    : repository(repository),
+      so_luong_buu_kien_hom_nay(0),
+      ngay_cua_bo_dem(layNgayHienTai()) {}
 
-KetQuaThemBuuKien BuuKienService::themBuuKien(
+KetQuaThemBuuKien BUUKIENSERVICE::themBuuKien(
     ThongTinBuuKien& thongTin) {
-    unique_ptr<BuuKien> buuKien = taoBuuKien(thongTin.loaiBuuKien);
+    unique_ptr<BUUKIEN> buuKien = taoBuuKien(thongTin.loaiBuuKien);
     if (!buuKien) {
         return KetQuaThemBuuKien::LOAI_KHONG_HOP_LE;
     }
+    if (chuanHoaTrangThaiBuuKien(thongTin.trangThai).empty()) {
+        return KetQuaThemBuuKien::TRANG_THAI_KHONG_HOP_LE;
+    }
 
-    size_t soThuTu = static_cast<size_t>(so_luong_buu_kien_hom_nay) + 1;
-    string maMoi = taoMaBuuKienMoi(soThuTu);
-    // while (repository.contains(maMoi)) {
-    //     maMoi = taoMaBuuKienMoi(++soThuTu);
-    // }
+    const string ngayHienTai = layNgayHienTai();
+
+    size_t soThuTu =
+        static_cast<size_t>(so_luong_buu_kien_hom_nay) + 1;
+    string maMoi = taoMaBuuKienMoi(ngayHienTai, soThuTu);
+    if (maMoi.empty()) {
+        return KetQuaThemBuuKien::MA_TRONG;
+    }
+    while (repository.contains(maMoi)) {
+        maMoi = taoMaBuuKienMoi(ngayHienTai, ++soThuTu);
+    }
     ganThongTin(*buuKien, thongTin);
     buuKien->SetMaBuuKien(maMoi);
 
@@ -114,18 +144,18 @@ KetQuaThemBuuKien BuuKienService::themBuuKien(
     }
 
     thongTin.maBuuKien = maMoi;
-    so_luong_buu_kien_hom_nay+=1;
+    so_luong_buu_kien_hom_nay = static_cast<int>(soThuTu);
     return KetQuaThemBuuKien::THANH_CONG;
 }
 
-bool BuuKienService::timBuuKienTheoMa(
+bool BUUKIENSERVICE::timBuuKienTheoMa(
     const string& maBuuKien,
     ThongTinBuuKien& ketQua) const {
     if (maBuuKien.empty()) {
         return false;
     }
 
-    const BuuKien* buuKien = repository.findByMaBuuKien(maBuuKien);
+    const BUUKIEN* buuKien = repository.findByMaBuuKien(maBuuKien);
     if (buuKien == nullptr) {
         return false;
     }
@@ -134,16 +164,19 @@ bool BuuKienService::timBuuKienTheoMa(
     return true;
 }
 
-KetQuaCapNhatBuuKien BuuKienService::capNhatBuuKien(
+KetQuaCapNhatBuuKien BUUKIENSERVICE::capNhatBuuKien(
     const string& maBuuKien,
     const ThongTinBuuKien& thongTin) {
     if (repository.findByMaBuuKien(maBuuKien) == nullptr) {
         return KetQuaCapNhatBuuKien::KHONG_TIM_THAY;
     }
 
-    unique_ptr<BuuKien> buuKien = taoBuuKien(thongTin.loaiBuuKien);
+    unique_ptr<BUUKIEN> buuKien = taoBuuKien(thongTin.loaiBuuKien);
     if (!buuKien) {
         return KetQuaCapNhatBuuKien::LOAI_KHONG_HOP_LE;
+    }
+    if (chuanHoaTrangThaiBuuKien(thongTin.trangThai).empty()) {
+        return KetQuaCapNhatBuuKien::TRANG_THAI_KHONG_HOP_LE;
     }
 
     ThongTinBuuKien thongTinCapNhat = thongTin;
@@ -155,13 +188,13 @@ KetQuaCapNhatBuuKien BuuKienService::capNhatBuuKien(
         : KetQuaCapNhatBuuKien::LOI_LUU_TRU;
 }
 
-KetQuaXuLyBuuKien BuuKienService::huyBuuKien(
+KetQuaXuLyBuuKien BUUKIENSERVICE::huyBuuKien(
     const string& maBuuKien) {
-    const BuuKien* buuKien = repository.findByMaBuuKien(maBuuKien);
+    const BUUKIEN* buuKien = repository.findByMaBuuKien(maBuuKien);
     if (buuKien == nullptr) {
         return KetQuaXuLyBuuKien::KHONG_TIM_THAY;
     }
-    if (buuKien->GetTrangThai() == "DA_HUY") {
+    if (chuanHoaTrangThaiBuuKien(buuKien->GetTrangThai()) == "DA_HUY") {
         return KetQuaXuLyBuuKien::DA_HUY;
     }
 
@@ -170,7 +203,7 @@ KetQuaXuLyBuuKien BuuKienService::huyBuuKien(
         : KetQuaXuLyBuuKien::LOI_LUU_TRU;
 }
 
-KetQuaXuLyBuuKien BuuKienService::xoaBuuKien(
+KetQuaXuLyBuuKien BUUKIENSERVICE::xoaBuuKien(
     const string& maBuuKien) {
     if (repository.findByMaBuuKien(maBuuKien) == nullptr) {
         return KetQuaXuLyBuuKien::KHONG_TIM_THAY;
@@ -181,12 +214,12 @@ KetQuaXuLyBuuKien BuuKienService::xoaBuuKien(
         : KetQuaXuLyBuuKien::LOI_LUU_TRU;
 }
 
-vector<ThongTinBuuKien> BuuKienService::layDanhSachBuuKien() const {
-    const vector<const BuuKien*> buuKienTrongKho = repository.getAll();
+vector<ThongTinBuuKien> BUUKIENSERVICE::layDanhSachBuuKien() const {
+    const vector<const BUUKIEN*> buuKienTrongKho = repository.getAll();
     vector<ThongTinBuuKien> danhSach;
     danhSach.reserve(buuKienTrongKho.size());
 
-    for (const BuuKien* buuKien : buuKienTrongKho) {
+    for (const BUUKIEN* buuKien : buuKienTrongKho) {
         danhSach.push_back(chuyenSangThongTin(*buuKien));
     }
 
@@ -194,7 +227,7 @@ vector<ThongTinBuuKien> BuuKienService::layDanhSachBuuKien() const {
 }
 
 
-string BuuKienService::layNgayHienTai() {
+string BUUKIENSERVICE::layNgayHienTai() {
     time_t now = time(nullptr);
 
     tm* current = localtime(&now);
@@ -205,18 +238,18 @@ string BuuKienService::layNgayHienTai() {
 
     stringstream ss;
 
-    ss << (current->tm_year + 1900)
+    ss << setw(2) << setfill('0') << current->tm_mday
        << setw(2) << setfill('0') << (current->tm_mon + 1)
-       << setw(2) << setfill('0') << current->tm_mday;
+       << (current->tm_year + 1900);
 
     return ss.str();
 }
 
-int BuuKienService::GetSoLuongBuuKienHomNay(){
+int BUUKIENSERVICE::GetSoLuongBuuKienHomNay(){
     return so_luong_buu_kien_hom_nay;
 }
 
-void BuuKienService::SetSoLuongBuuKienHomNay(const int& slm){
+void BUUKIENSERVICE::SetSoLuongBuuKienHomNay(const int& slm){
     so_luong_buu_kien_hom_nay=slm;
 }
 

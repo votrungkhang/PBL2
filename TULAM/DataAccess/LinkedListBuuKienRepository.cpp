@@ -2,13 +2,13 @@
 
 #include <utility>
 
-LinkedListBuuKienRepository::Node::Node(unique_ptr<BuuKien> buuKien)
+LINKEDLISTBUUKIENREPOSITORY::Node::Node(unique_ptr<BUUKIEN> buuKien)
     : data(move(buuKien)), next(nullptr) {}
 
-LinkedListBuuKienRepository::LinkedListBuuKienRepository()
+LINKEDLISTBUUKIENREPOSITORY::LINKEDLISTBUUKIENREPOSITORY()
     : head(nullptr), tail(nullptr),soLuongBuuKien(0) {}
 
-LinkedListBuuKienRepository::~LinkedListBuuKienRepository() {
+LINKEDLISTBUUKIENREPOSITORY::~LINKEDLISTBUUKIENREPOSITORY() {
     while (head != nullptr) {
         Node* node = head;
         head = head->next;
@@ -16,7 +16,7 @@ LinkedListBuuKienRepository::~LinkedListBuuKienRepository() {
     }
 }
 
-bool LinkedListBuuKienRepository::add( unique_ptr<BuuKien> buuKien) {
+bool LINKEDLISTBUUKIENREPOSITORY::add( unique_ptr<BUUKIEN> buuKien) {
     if(!buuKien){
         return false;
     }
@@ -34,7 +34,7 @@ bool LinkedListBuuKienRepository::add( unique_ptr<BuuKien> buuKien) {
     return true;
 }
 
-bool LinkedListBuuKienRepository::contains(
+bool LINKEDLISTBUUKIENREPOSITORY::contains(
     const string& maBuuKien) const {
     for (Node* current = head; current != nullptr; current = current->next) {
         if (current->data->GetMaBuuKien() == maBuuKien) {
@@ -44,7 +44,7 @@ bool LinkedListBuuKienRepository::contains(
     return false;
 }
 
-const BuuKien* LinkedListBuuKienRepository::findByMaBuuKien(
+const BUUKIEN* LINKEDLISTBUUKIENREPOSITORY::findByMaBuuKien(
     const string& maBuuKien) const {
     for (Node* current = head; current != nullptr; current = current->next) {
         if (current->data->GetMaBuuKien() == maBuuKien) {
@@ -54,9 +54,9 @@ const BuuKien* LinkedListBuuKienRepository::findByMaBuuKien(
     return nullptr;
 }
 
-bool LinkedListBuuKienRepository::update(
+bool LINKEDLISTBUUKIENREPOSITORY::update(
     const string& maBuuKien,
-    unique_ptr<BuuKien> buuKien) {
+    unique_ptr<BUUKIEN> buuKien) {
     if (!buuKien || buuKien->GetMaBuuKien() != maBuuKien) {
         return false;
     }
@@ -70,7 +70,7 @@ bool LinkedListBuuKienRepository::update(
     return false;
 }
 
-bool LinkedListBuuKienRepository::updateTrangThai(
+bool LINKEDLISTBUUKIENREPOSITORY::updateTrangThai(
     const string& maBuuKien,
     const string& trangThai) {
     for (Node* current = head; current != nullptr; current = current->next) {
@@ -82,7 +82,7 @@ bool LinkedListBuuKienRepository::updateTrangThai(
     return false;
 }
 
-bool LinkedListBuuKienRepository::remove(const string& maBuuKien) {
+bool LINKEDLISTBUUKIENREPOSITORY::remove(const string& maBuuKien) {
     Node* previous = nullptr;
     Node* current = head;
     while (current != nullptr) {
@@ -107,18 +107,18 @@ bool LinkedListBuuKienRepository::remove(const string& maBuuKien) {
     return false;
 }
 
-vector<const BuuKien*> LinkedListBuuKienRepository::getAll() const {
-    vector<const BuuKien*> result;
+vector<const BUUKIEN*> LINKEDLISTBUUKIENREPOSITORY::getAll() const {
+    vector<const BUUKIEN*> result;
     for (Node* current = head; current != nullptr; current = current->next) {
         result.push_back(current->data.get());
     }
     return result;
 }
 
-int LinkedListBuuKienRepository::getSoLuongBuuKien() const {
+int LINKEDLISTBUUKIENREPOSITORY::getSoLuongBuuKien() const {
     return soLuongBuuKien;
 }
 
-void LinkedListBuuKienRepository::setSoLuongBuuKien(const int& soLuongBKMoi){
+void LINKEDLISTBUUKIENREPOSITORY::setSoLuongBuuKien(const int& soLuongBKMoi){
     soLuongBuuKien=soLuongBKMoi;
 }

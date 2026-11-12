@@ -2,10 +2,10 @@
 #define BUUKIENBINHTHUONG_H
 #include "BuuKien.h"
 
-class BuuKienBinhThuong : public BuuKien {
+class BUUKIENBINHTHUONG : public BUUKIEN {
 private:
 public:
-    BuuKienBinhThuong();
+    BUUKIENBINHTHUONG();
 };
 
 #endif

@@ -1,13 +1,13 @@
 #ifndef FILEBUUKIEN_H
 #define FILEBUUKIEN_H
 
-#include "IFileBuuKien.h"
+#include "IFile.h"
 
-class FileBuuKien : public IFileBuuKien {
+class FILEBUUKIEN : public IFILE{
 public:
-    explicit FileBuuKien(const std::string&);
-    bool save(IBuuKienRepository&) override;
-    bool read(IBuuKienRepository&) override;
+    explicit FILEBUUKIEN(const std::string&);
+    bool save(IBUUKIENREPOSITORY&) override;
+    bool read(IBUUKIENREPOSITORY&) override;
 };
 
 #endif

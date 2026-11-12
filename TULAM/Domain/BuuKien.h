@@ -5,7 +5,7 @@
 using namespace std;
 #include "Enums.h"
 
-class BuuKien {
+class BUUKIEN {
 protected:
     string ma_buu_kien;
     string loai_buu_kien;
@@ -23,9 +23,9 @@ protected:
     double tong_phi;
 
 public:
-    virtual ~BuuKien() = default;
+    virtual ~BUUKIEN() = default;
 
-    BuuKien(
+    BUUKIEN(
         const string& ma_buu_kien = "",
         const string& loai_buu_kien = "",
         const double& trong_luong = 0,
